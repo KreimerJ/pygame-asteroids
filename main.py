@@ -1,8 +1,10 @@
 import pygame
 from pygame.surface import Surface
 
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from circleshape import CircleShape
+from constants import HALF_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 from logger import log_state
+from player import Player
 
 
 def main():
@@ -13,10 +15,12 @@ def main():
 
     clock = pygame.time.Clock()
 
-    game_queue(screen, clock)
+    player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE)
+
+    game_queue(screen, clock, player)
 
 
-def game_queue(screen: Surface, clock: pygame.time.Clock):
+def game_queue(screen: Surface, clock: pygame.time.Clock, player: Player):
     dt = 0
     while True:
         log_state()
@@ -24,6 +28,7 @@ def game_queue(screen: Surface, clock: pygame.time.Clock):
             if event.type == pygame.QUIT:
                 return
         screen.fill(color="black")
+        player.draw(screen)
         pygame.display.flip()
         clock_dt = clock.tick(60)
         dt = clock_dt / 1000
