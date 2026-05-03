@@ -10,10 +10,14 @@ def main():
     print_screen_info()
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    game_queue(screen)
+
+    clock = pygame.time.Clock()
+
+    game_queue(screen, clock)
 
 
-def game_queue(screen: pygame.Surface):
+def game_queue(screen: Surface, clock: pygame.time.Clock):
+    dt = 0
     while True:
         log_state()
         for event in pygame.event.get():
@@ -21,6 +25,8 @@ def game_queue(screen: pygame.Surface):
                 return
         screen.fill(color="black")
         pygame.display.flip()
+        clock_dt = clock.tick(60)
+        dt = clock_dt / 1000
 
 
 def print_screen_info():
