@@ -1,7 +1,6 @@
 import pygame
 from pygame.surface import Surface
 
-from circleshape import CircleShape
 from constants import HALF_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 from logger import log_state
 from player import Player
@@ -28,6 +27,7 @@ def game_queue(screen: Surface, clock: pygame.time.Clock, player: Player):
             if event.type == pygame.QUIT:
                 return
         screen.fill(color="black")
+        player.update(dt)
         player.draw(screen)
         pygame.display.flip()
         clock_dt = clock.tick(60)
