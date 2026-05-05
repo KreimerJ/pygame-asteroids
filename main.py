@@ -14,12 +14,20 @@ def main():
 
     clock = pygame.time.Clock()
 
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    Player.containers = (updatable, drawable)
+
     player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE)
+    game_queue(screen, clock, updatable, drawable)
 
-    game_queue(screen, clock, player)
 
-
-def game_queue(screen: Surface, clock: pygame.time.Clock, player: Player):
+def game_queue(
+    screen: Surface,
+    clock: pygame.time.Clock,
+    updatable: pygame.sprite.Group,
+    drawable: pygame.sprite.Group,
+):
     dt = 0
     while True:
         log_state()
@@ -27,8 +35,9 @@ def game_queue(screen: Surface, clock: pygame.time.Clock, player: Player):
             if event.type == pygame.QUIT:
                 return
         screen.fill(color="black")
-        player.update(dt)
-        player.draw(screen)
+        updatable.update(dt)
+        for item in drawable:
+            item.draw(screen)
         pygame.display.flip()
         clock_dt = clock.tick(60)
         dt = clock_dt / 1000
