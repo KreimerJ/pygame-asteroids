@@ -1,10 +1,12 @@
+import sys
+
 import pygame
 from pygame.surface import Surface
 
 from asteroidfield import AsteroidField
 from asteroids import Asteroid
 from constants import HALF_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
-from logger import log_state
+from logger import log_event, log_state
 from player import Player
 
 
@@ -27,7 +29,7 @@ def main():
     player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE)
     asteroid_field = AsteroidField()
 
-    game_queue(screen, clock, updatable, drawable, asteroids)
+    game_queue(screen, clock, updatable, drawable, asteroids, player)
 
 
 def game_queue(
@@ -36,6 +38,7 @@ def game_queue(
     updatable: pygame.sprite.Group,
     drawable: pygame.sprite.Group,
     asteroid_group: pygame.sprite.Group,
+    player: Player,
 ):
     dt = 0
     asteroids = asteroid_group
@@ -46,11 +49,43 @@ def game_queue(
                 return
         screen.fill(color="black")
         updatable.update(dt)
+
+        detect_collisions(asteroid_group, player, screen)
         for item in drawable:
             item.draw(screen)
         pygame.display.flip()
         clock_dt = clock.tick(60)
         dt = clock_dt / 1000
+
+
+def detect_collisions(
+    asteroids: pygame.sprite.Group, player: Player, screen: pygame.Surface
+):
+    for asteroid in asteroids:
+        if asteroid.collides_with(player):
+            log_event("player_hit")
+            print("game over")
+            game_over_message(screen)
+            pygame.time.wait(3000)
+            sys.exit()
+
+
+def game_over_message(screen: pygame.Surface):
+    font = pygame.font.SysFont(None, 64)
+
+    # 2. Render the text into an image. (True = anti-aliasing/smooth edges, "white" = color)
+    text_surface = font.render(
+        "You lost your ship, you cannot continue.", True, "white"
+    )
+
+    # 3. Figure out where the exact middle of the screen is
+    text_rect = text_surface.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+
+    # 4. "Blit" (paste) the text image onto your main screen
+    screen.blit(text_surface, text_rect)
+
+    # 5. Force the screen to update right now so we actually see it
+    pygame.display.flip()
 
 
 def print_screen_info():
