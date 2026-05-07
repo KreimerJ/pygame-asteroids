@@ -8,6 +8,7 @@ from asteroids import Asteroid
 from constants import HALF_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 from logger import log_event, log_state
 from player import Player
+from shot import Shot
 
 
 def main():
@@ -21,15 +22,17 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
+    Shot.containers = (shots, updatable, drawable)
 
     player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE)
     asteroid_field = AsteroidField()
 
-    game_queue(screen, clock, updatable, drawable, asteroids, player)
+    game_queue(screen, clock, updatable, drawable, asteroids, player, shots)
 
 
 def game_queue(
@@ -39,9 +42,9 @@ def game_queue(
     drawable: pygame.sprite.Group,
     asteroid_group: pygame.sprite.Group,
     player: Player,
+    shots: pygame.sprite.Group,
 ):
     dt = 0
-    asteroids = asteroid_group
     while True:
         log_state()
         for event in pygame.event.get():
