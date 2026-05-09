@@ -29,7 +29,7 @@ def main():
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
 
-    player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE)
+    player = Player(SCREEN_WIDTH / HALF_SIZE, SCREEN_HEIGHT / HALF_SIZE, 0)
     asteroid_field = AsteroidField()
 
     game_queue(screen, clock, updatable, drawable, asteroids, player, shots)
@@ -53,7 +53,7 @@ def game_queue(
         screen.fill(color="black")
         updatable.update(dt)
 
-        detect_collisions(asteroid_group, player, screen)
+        detect_collisions(asteroid_group, player, screen, shots)
         for item in drawable:
             item.draw(screen)
         pygame.display.flip()
@@ -62,7 +62,10 @@ def game_queue(
 
 
 def detect_collisions(
-    asteroids: pygame.sprite.Group, player: Player, screen: pygame.Surface
+    asteroids: pygame.sprite.Group,
+    player: Player,
+    screen: pygame.Surface,
+    shots: pygame.sprite.Group,
 ):
     for asteroid in asteroids:
         if asteroid.collides_with(player):
@@ -71,6 +74,12 @@ def detect_collisions(
             game_over_message(screen)
             pygame.time.wait(3000)
             sys.exit()
+
+        for shot in shots:
+            if asteroid.collides_with(shot):
+                log_event("asteroid_shot")
+                asteroid.split()
+                shot.kill()
 
 
 def game_over_message(screen: pygame.Surface):
